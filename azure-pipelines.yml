@@ -1,9 +1,23 @@
 # Docker
 # Build and push an image to Azure Container Registry
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+- task: Docker@2
+  inputs:
+    containerRegistry: 'myconnection'
+    repository: 'Ojaswebsite'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
 
 trigger:
 - master
+- task: DockerCompose@1
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'singlepointsoftwareconnection'
+    azureContainerRegistry: '{"loginServer":"myconnection.azurecr.io", "id" : "/subscriptions/05fa4f12-e211-472a-a428-1c5d6a27117e/resourceGroups/InfosysDev/providers/Microsoft.ContainerRegistry/registries/myconnection"}'
+    dockerComposeFile: '**/docker-compose.yml'
+    action: 'Run a Docker Compose command'
+    dockerComposeCommand: 'docker compose up -d --build'
 
 resources:
 - repo: self
